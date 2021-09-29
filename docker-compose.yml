@@ -10,7 +10,6 @@ services:
     environment:
       PASSWORD: password # set to your password
     volumes:
-      - ./cloud/data/:/home/coder/cloud
       - ./files:/home/coder/data
       - ./.local/share/code-server:/home/coder/.local/share/code-server
   https-portal:
