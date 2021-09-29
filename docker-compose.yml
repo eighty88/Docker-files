@@ -1,0 +1,30 @@
+version: '3'
+services:
+  code:
+    container_name: code-server
+    image: codercom/code-server
+    privileged: true
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      PASSWORD: password # set to your password
+    volumes:
+      - ./cloud/data/:/home/coder/cloud
+      - ./files:/home/coder/data
+      - ./.local/share/code-server:/home/coder/.local/share/code-server
+  https-portal:
+    container_name: https-portal
+    image: steveltn/https-portal
+    ports:
+      - '80:80'
+      - '443:443'
+    restart: always
+    environment:
+      DOMAINS: 'code.example.org -> http://code:8080'
+      STAGE: 'production'
+      WEBSOCKET: "true"
+    volumes:
+      - ./data/ssl_certs:/var/lib/https-portal
+    links:
+      - nginx
