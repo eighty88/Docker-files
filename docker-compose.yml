@@ -25,5 +25,3 @@ services:
       WEBSOCKET: "true"
     volumes:
       - ./data/ssl_certs:/var/lib/https-portal
-    links:
-      - nginx
