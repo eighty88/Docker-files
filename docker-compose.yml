@@ -3,15 +3,15 @@ services:
   code:
     container_name: code-server
     image: codercom/code-server
-    privileged: true
+    privileged: true # ホストへのアクセス権を与える
     restart: unless-stopped
     ports:
       - "8080:8080"
     environment:
-      PASSWORD: password # set to your password
+      PASSWORD: password # パスワードを設定する
     volumes:
-      - ./files:/home/coder/data
-      - ./.local/share/code-server:/home/coder/.local/share/code-server
+      - ./files:/home/coder/data # 保存用ディレクトリ
+      - ./.local/share/code-server:/home/coder/.local/share/code-server # code-serverの設定や拡張機能のフォルダ
   https-portal:
     container_name: https-portal
     image: steveltn/https-portal
@@ -20,8 +20,8 @@ services:
       - '443:443'
     restart: always
     environment:
-      DOMAINS: 'code.example.org -> http://code:8080'
-      STAGE: 'production'
-      WEBSOCKET: "true"
+      DOMAINS: 'code.example.org -> http://code:8080' # ドメインを設定しておく
+      STAGE: 'production' # ドメイン使用する場合
+      WEBSOCKET: "true" # これをしないとcode-serverが動かない
     volumes:
-      - ./data/ssl_certs:/var/lib/https-portal
+      - ./data/ssl_certs:/var/lib/https-portal # 証明書を保存し、何回も取り直さなくて良いようにする
