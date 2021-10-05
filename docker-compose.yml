@@ -20,8 +20,36 @@ services:
       - '443:443'
     restart: always
     environment:
-      DOMAINS: 'code.example.org -> http://code:8080' # ドメインを設定しておく
+      DOMAINS: 'code.example.org -> http://code:8080, ci.example.org -> http://ci:8111' # ドメインを設定しておく
       STAGE: 'production' # ドメイン使用する場合
       WEBSOCKET: "true" # これをしないとcode-serverが動かない
     volumes:
       - ./data/ssl_certs:/var/lib/https-portal # 証明書を保存し、何回も取り直さなくて良いようにする
+  ci:
+    container_name: ci
+    image: jetbrains/teamcity-server
+    ports:
+      - 8111:8111
+    volumes: 
+      - ./ci/logs:/opt/teamcity/logs
+      - ./ci/data:/data/teamcity_server/datadir
+    environment:
+      - TEAMCITY_SERVER_MEM_OPTS="-Xmx750m"
+  ci-agent:
+    container_name: ci-agent
+    image: jetbrains/teamcity-agent
+    environment: 
+      - SERVER_URL=ci:8111
+  db:
+    container_name: db
+    image: postgres:13
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: postgres
+      POSTGRES_DB: teamcity
+    ports:
+        - 5432:5432
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
